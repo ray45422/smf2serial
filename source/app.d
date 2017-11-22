@@ -13,6 +13,7 @@ import midifile.midifile;
 import serial.device;
 
 SerialPort port;
+uint microsecondsPerTick = 1000;
 void main(string[] args){
 	string devicePath = "/dev/ttyACM0";
 	string filePath = "data/test.mid";
@@ -21,11 +22,8 @@ void main(string[] args){
 	if(args.length >= 2){
 		filePath = args[1];
 	}
-	port = new SerialPort(devicePath, dur!("msecs")(1000), dur!("msecs")(1000));
-	port.speed(BaudRate.BR_115200);
 	MIDIFile midi = new MIDIFile(filePath);
 	MIDIEvent[] events;
-	uint microsecondsPerTick = 1000;
 	Duration offsetTime = Duration.zero;
 	ulong offsetTick = 0;
 	foreach(MIDIEvent[] eventss; midi.tracks){
@@ -33,8 +31,9 @@ void main(string[] args){
 			events ~= event;
 		}
 	}
-
 	events.sort!("a.tick < b.tick", SwapStrategy.stable);
+	port = new SerialPort(devicePath, dur!("msecs")(1000), dur!("msecs")(1000));
+	port.speed(BaudRate.BR_115200);
 	Thread.sleep(dur!("msecs")(500));
 	StopWatch sw;
 	sw.start();
@@ -71,6 +70,15 @@ void eventExec(MIDIEvent event){
 			byte[] data = new byte[2];
 			data[0] = cast(byte)(0x80 | note.channel);
 			data[1] = cast(byte)note.note;
+			port.write(data);
+			//data.dump;
+			break;
+		case MIDIEventType.PitchWheel:
+			int pitch = event.pitch.pitch + 8192;
+			byte[] data = new byte[3];
+			data[0] = cast(byte)(0xE0 | note.channel);
+			data[1] = cast(byte)(pitch & 0x7f);
+			data[2] = cast(byte)(pitch >> 7);
 			port.write(data);
 			//data.dump;
 			break;

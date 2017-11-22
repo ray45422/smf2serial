@@ -1,6 +1,7 @@
 enum MIDIEvent{
 	NoteOff = 0x80,
 	NoteOn = 0x90,
+	PitchBend = 0xe0,
 };
 void setup() {
 	Serial.begin(115200);
@@ -10,6 +11,8 @@ byte eventLSB;
 char data[5];
 byte index = 0;
 char lastNote = -1;
+long pitchBend = 0;
+byte pitchRange = 12;
 void loop() {
 	if(Serial.available()){
 		byte a = Serial.read();
@@ -46,6 +49,16 @@ void loop() {
 				lastNote = -1;
 			}
 			break;
+		case PitchBend:
+			if(index < 2){
+				break;
+			}
+			pitchBend = (data[1] << 7 | (data[0] & 0x7f)) - 8192;
+			if(lastNote != -1){
+				noTone(11);
+				tone(11, note2Freq(lastNote));
+			}
+			break;
 	}
 }
 bool isStatus(byte data){
@@ -55,5 +68,7 @@ bool isData(byte data){
 	return !isStatus(data);
 }
 uint16_t note2Freq(byte note){
-	return (int)(440 * pow(2, (note - 69) /12.0));
+	double a = pitchBend/8192.0;
+	a = pow((1.0 + pitchRange / 12.0), a);
+	return (int)(440 * pow(2, (note - 69) /12.0) * a);
 }
