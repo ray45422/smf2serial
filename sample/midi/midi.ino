@@ -24,6 +24,9 @@ void loop() {
 	if(index == 0){
 		return;
 	}
+	if(eventLSB != 0){
+		return;
+	}
 	switch(eventMSB){
 		case NoteOn:
 			if(index < 2 || lastNote != -1){
