@@ -1,0 +1,13 @@
+{
+	"name": "smf2serial",
+	"authors": [
+		"ray45422"
+	],
+	"dependencies": {
+		"dmidifile": {"path": "./dmidifile"},
+		"serial-port": "~>1.2.0"
+	},
+	"description": "SMF to Serial",
+	"copyright": "Copyright © 2017, ray45422",
+	"license": "mit"
+}

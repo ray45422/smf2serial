@@ -1,0 +1,16 @@
+.dub
+dub.selections.json
+docs.json
+__dummy.html
+docs/
+smf2serial
+smf2serial.so
+smf2serial.dylib
+smf2serial.dll
+smf2serial.a
+smf2serial.lib
+smf2serial-test-*
+*.exe
+*.o
+*.obj
+*.lst
