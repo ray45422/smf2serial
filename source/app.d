@@ -1,11 +1,8 @@
 import std.stdio;
 import std.math;
 import std.conv;
-import std.array;
-import std.algorithm;
 import std.algorithm.sorting: sort;
 import std.algorithm.mutation: SwapStrategy;
-import std.datetime;
 import std.datetime.stopwatch: StopWatch;
 import std.getopt;
 import core.thread;
