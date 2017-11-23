@@ -7,7 +7,7 @@ namespace MIDILib{
 	bool isData(uint8_t data){
 		return !isStatus(data);
 	}
-	MIDI::MIDI(MIDIEventListener* listener){
+	MIDI::MIDI(MIDIEventListener listener){
 		this->listener = listener;
 	}
 	void MIDI::receive(uint8_t data){
@@ -31,13 +31,13 @@ namespace MIDILib{
 				if(index < 2){
 					break;
 				}
-				listener->noteOn(note2Freq(data[0]), data[1]);
+				listener.noteOn(note2Freq(data[0]), data[1]);
 				break;
 			case NoteOff:
 				if(index < 1){
 					break;
 				}
-				listener->noteOff(note2Freq(data[0]), data[1]);
+				listener.noteOff(note2Freq(data[0]), data[1]);
 				break;
 			case PitchBend:
 				if(index < 2){
