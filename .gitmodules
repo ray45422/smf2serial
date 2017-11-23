@@ -1,0 +1,3 @@
+[submodule "dmidifile"]
+	path = dmidifile
+	url = https://github.com/ray45422/dmidifile.git
