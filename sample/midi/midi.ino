@@ -1,9 +1,15 @@
 #include "midilib.h"
 struct Listener: MIDILib::MIDIEventListener{
 	void noteOn(MIDILib::Note note) override{
+		if(note.channel != 0){
+			return;
+		}
 		tone(11,note.freq);
 	}
 	void noteOff(MIDILib::Note note) override{
+		if(note.channel != 0){
+			return;
+		}
 		noTone(11);
 	}
 };

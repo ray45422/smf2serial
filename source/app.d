@@ -53,9 +53,6 @@ void main(string[] args){
 	}
 }
 void eventExec(MIDIEvent event){
-	if(event.note.channel != 0){
-		return;
-	}
 	auto note = event.note;
 	switch(event.type){
 		case MIDIEventType.NoteOn:

@@ -23,9 +23,6 @@ namespace MIDILib{
 		if(index == 0){
 			return;
 		}
-		if(subType != 0){
-			return;
-		}
 		Note note;
 		switch(type){
 			case NoteOn:
