@@ -1,5 +1,5 @@
 #include "midilib.h"
-class Listener: public MIDILib::MIDIEventListener{
+struct Listener: MIDILib::MIDIEventListener{
 	void noteOn(uint16_t freq, byte velocity) override{
 		tone(11,freq);
 	}
@@ -10,9 +10,10 @@ class Listener: public MIDILib::MIDIEventListener{
 
 Listener listener;
 
-MIDILib::MIDI midi((MIDILib::MIDIEventListener)listener);
+MIDILib::MIDI midi(&listener);
 void setup() {
 	Serial.begin(115200);
+	Serial1.begin(115200);
 }
 void loop() {
 	if(Serial.available()){
