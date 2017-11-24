@@ -1,4 +1,3 @@
-#include<Arduino.h>
 namespace MIDILib{
 	enum MIDIEventType{
 		NoteOff = 0x80,

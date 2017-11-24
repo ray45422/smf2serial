@@ -1,4 +1,3 @@
-#include<Arduino.h>
 #include "midilib.h"
 namespace MIDILib{
 	bool isStatus(uint8_t data){
