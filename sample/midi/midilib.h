@@ -12,11 +12,13 @@ namespace MIDILib{
 		uint8_t velocity;
 	};
 	struct MIDIEventListener{
-		virtual void noteOn(Note note) = 0;
-		virtual void noteOff(Note note) = 0;
+		virtual void noteOn(Note note, byte* rawData, byte  dataLen) = 0;
+		virtual void noteOff(Note note, byte* rawData, byte dataLen) = 0;
 	};
 	bool isStatus(uint8_t data);
 	bool isData(uint8_t data);
+	bool isChannelMessage(uint8_t data);
+	bool isSystemMessage(uint8_t data);
 	class MIDI{
 	private:
 		uint8_t type;

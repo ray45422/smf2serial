@@ -31,7 +31,7 @@ void main(string[] args){
 	events.sort!("a.tick < b.tick", SwapStrategy.stable);
 	port = new SerialPort(devicePath, dur!("msecs")(1000), dur!("msecs")(1000));
 	port.speed(BaudRate.BR_115200);
-	Thread.sleep(dur!("msecs")(500));
+	Thread.sleep(dur!("msecs")(1000));
 	StopWatch sw;
 	sw.start();
 	foreach(MIDIEvent event; events){

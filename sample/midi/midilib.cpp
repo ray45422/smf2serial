@@ -7,6 +7,12 @@ namespace MIDILib{
 	bool isData(uint8_t data){
 		return !isStatus(data);
 	}
+	bool isChannelMessage(uint8_t data){
+		return isStatus(data) && (data <= 0xEF);
+	}
+	bool isSystemMessage(uint8_t data){
+		return isStatus(data) && (data > 0xEF);
+	}
 	MIDI::MIDI(MIDIEventListener* listener){
 		this->listener = listener;
 	}
@@ -14,7 +20,8 @@ namespace MIDILib{
 		if(isStatus(data)){
 			type = data & 0xf0;
 			subType = data & 0x0f;
-			index = 0;
+			this->data[0] = data;
+			index = 1;
 		}else{
 			this->data[index++] = data;
 		}
@@ -26,32 +33,33 @@ namespace MIDILib{
 		Note note;
 		switch(type){
 			case NoteOn:
-				if(index < 2){
-					break;
+				if(index < 3){
+					return;
 				}
 				note.channel = subType;
-				note.note = data[0];
-				note.velocity = data[1];
+				note.note = data[1];
+				note.velocity = data[2];
 				note.freq = applyPitch(note.note, note.channel);
-				listener->noteOn(note);
+				listener->noteOn(note, data, index);
 				break;
 			case NoteOff:
-				if(index < 1){
-					break;
+				if(index < 2){
+					return;
 				}
 				note.channel = subType;
-				note.note = data[0];
-				note.velocity = data[1];
+				note.note = data[1];
+				note.velocity = data[2];
 				note.freq = applyPitch(note.note, note.channel);
-				listener->noteOff(note);
+				listener->noteOff(note, data, index);
 				break;
 			case PitchBend:
-				if(index < 2){
-					break;
+				if(index < 3){
+					return;
 				}
-				pitchBend[subType] = (data[1] << 7 | (data[0] & 0x7f)) - 8192;
+				pitchBend[subType] = (data[2] << 7 | (data[1] & 0x7f)) - 8192;
 				break;
 		}
+		index = 0;
 	}
 	uint16_t MIDI::applyPitch(uint8_t note, uint8_t channel){
 		double a = pitchBend[channel]/8192.0;
