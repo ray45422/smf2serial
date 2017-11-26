@@ -1,21 +1,21 @@
 #include "midilib.h"
 namespace MIDILib{
-	bool isStatus(uint8_t data){
+	bool isStatus(unsigned char data){
 		return (data & 0x80) >> 7;
 	}
-	bool isData(uint8_t data){
+	bool isData(unsigned char data){
 		return !isStatus(data);
 	}
-	bool isChannelMessage(uint8_t data){
+	bool isChannelMessage(unsigned char data){
 		return isStatus(data) && (data <= 0xEF);
 	}
-	bool isSystemMessage(uint8_t data){
+	bool isSystemMessage(unsigned char data){
 		return isStatus(data) && (data > 0xEF);
 	}
 	MIDI::MIDI(MIDIEventListener* listener){
 		this->listener = listener;
 	}
-	void MIDI::receive(uint8_t data){
+	void MIDI::receive(unsigned char data){
 		if(isStatus(data)){
 			type = data & 0xf0;
 			subType = data & 0x0f;
@@ -60,12 +60,12 @@ namespace MIDILib{
 		}
 		index = 0;
 	}
-	uint16_t MIDI::applyPitch(uint8_t note, uint8_t channel){
+	unsigned int MIDI::applyPitch(unsigned char note, unsigned char channel){
 		double a = pitchBend[channel]/8192.0;
 		a = pow((1.0 + pitchRange / 12.0), a);
 		return (int)(note2Freq(note) * a);
 	}
-	uint16_t MIDI::note2Freq(uint8_t note){
+	unsigned int MIDI::note2Freq(unsigned char note){
 		return (int)(440 * pow(2, (note - 69) /12.0));
 	}
 }

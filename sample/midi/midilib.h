@@ -1,3 +1,4 @@
+#include<math.h>
 namespace MIDILib{
 	enum MIDIEventType{
 		NoteOff = 0x80,
@@ -5,34 +6,34 @@ namespace MIDILib{
 		PitchBend = 0xe0,
 	};
 	struct Note{
-		uint8_t channel;
-		uint8_t note;
-		uint16_t freq;
-		uint8_t velocity;
+		unsigned char channel;
+		unsigned char note;
+		unsigned int freq;
+		unsigned char velocity;
 	};
 	struct MIDIEventListener{
-		virtual void noteOn(Note note, byte* rawData, byte  dataLen) = 0;
-		virtual void noteOff(Note note, byte* rawData, byte dataLen) = 0;
+		virtual void noteOn(Note note, unsigned char* rawData, unsigned char  dataLen) = 0;
+		virtual void noteOff(Note note, unsigned char* rawData, unsigned char dataLen) = 0;
 	};
-	bool isStatus(uint8_t data);
-	bool isData(uint8_t data);
-	bool isChannelMessage(uint8_t data);
-	bool isSystemMessage(uint8_t data);
+	bool isStatus(unsigned char data);
+	bool isData(unsigned char data);
+	bool isChannelMessage(unsigned char data);
+	bool isSystemMessage(unsigned char data);
 	class MIDI{
 	private:
-		uint8_t type;
-		uint8_t subType;
-		uint8_t data[3];
-		uint8_t index = 0;
+		unsigned char type;
+		unsigned char subType;
+		unsigned char data[3];
+		unsigned char index = 0;
 		MIDIEventListener* listener;
 		Note note;
 		int pitchBend[16] = {};
-		uint8_t pitchRange = 12;
+		unsigned char pitchRange = 12;
 	public:
 		MIDI(MIDIEventListener* listener);
 		void tick();
-		void receive(byte data);
-		uint16_t applyPitch(uint8_t note, uint8_t channel);
-		uint16_t note2Freq(uint8_t note);
+		void receive(unsigned char data);
+		unsigned int applyPitch(unsigned char note, unsigned char channel);
+		unsigned int note2Freq(unsigned char note);
 	};
 }
