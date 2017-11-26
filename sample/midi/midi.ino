@@ -5,7 +5,7 @@ char lastNotes[16];
 char lastNote = -1;
 void slaveSend(char channel, byte* data, byte len){
 	if(MIDILib::isChannelMessage(data[0])){
-		data[0] |= channel;
+		data[0] = (data[0] & 0xf0) | (channel & 0x0f);
 	}
 	for(int i = 0; i < len; i++){
 		Serial1.write(data[i]);
