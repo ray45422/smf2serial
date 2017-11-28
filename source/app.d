@@ -10,7 +10,7 @@ import midifile.midifile;
 import serial.device;
 
 SerialPort port;
-uint microsecondsPerTick = 1000;
+double microsecondsPerTick = 1000.0;
 void main(string[] args){
 	string devicePath = "/dev/ttyACM0";
 	string filePath = "data/test.mid";
@@ -21,7 +21,6 @@ void main(string[] args){
 	}
 	MIDIFile midi = new MIDIFile(filePath);
 	MIDIEvent[] events;
-	Duration offsetTime = Duration.zero;
 	ulong offsetTick = 0;
 	foreach(MIDIEvent[] eventss; midi.tracks){
 		foreach(MIDIEvent event; eventss){
@@ -35,12 +34,14 @@ void main(string[] args){
 	StopWatch sw;
 	sw.start();
 	foreach(MIDIEvent event; events){
-		while(dur!"usecs"((event.tick - offsetTick)*microsecondsPerTick) > (sw.peek - offsetTime)){
+		Duration d = (dur!"usecs"((event.tick - offsetTick) * cast(long)microsecondsPerTick) - sw.peek);
+		if(d > Duration.zero){
+			Thread.sleep(d);
 		}
 		eventExec(event);
 		switch(event.subType){
 			case MIDIEvents.Tempo:
-				offsetTime = sw.peek;
+				sw.reset();
 				offsetTick = event.tick;
 				microsecondsPerTick = event.tempo.microsecondsPerBeat / midi.ticksPerBeat;
 				break;
@@ -61,9 +62,10 @@ void eventExec(MIDIEvent event){
 			//data.dump;
 			break;
 		case MIDIEventType.NoteOff:
-			byte[] data = new byte[2];
+			byte[] data = new byte[3];
 			data[0] = cast(byte)(0x80 | note.channel);
 			data[1] = cast(byte)note.note;
+			data[2] = 0;
 			port.write(data);
 			//data.dump;
 			break;
